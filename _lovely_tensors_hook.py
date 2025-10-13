@@ -76,7 +76,6 @@ class _TorchFinder(importlib.abc.MetaPathFinder):
         real_spec.loader = _WrappedTorchLoader(real_spec.loader)
         return real_spec
 
-print("ATTEMPTING")  # TODO
 if os.environ.get("LOVELY_TENSORS", "").strip().lower() in {"1", "true", "yes"}:
     if torch_loaded():
         _after_import_torch()
