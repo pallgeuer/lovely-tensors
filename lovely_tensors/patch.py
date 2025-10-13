@@ -19,6 +19,9 @@ from .repr_chans import ChanProxy
 def monkey_patch(cls=torch.Tensor):
     "Monkey-patch lovely features into `cls`"
 
+    if hasattr(cls, "rgb"):
+        return
+
     if not hasattr(cls, '_plain_repr'):
         if cls is torch.Tensor:
             # This avoids invoking the _torch_function_ mechanism
