@@ -28,7 +28,7 @@ def torch_patched() -> bool:
     T = getattr(mod, "Tensor", None)
     if T is None:
         return False
-    return hasattr(T, "rgb")
+    return hasattr(T, "_plain_repr")
 
 def _after_import_torch():
     if not torch_patched():
