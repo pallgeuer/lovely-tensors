@@ -499,9 +499,9 @@ func(torch.tensor([1,2,3]))
 ## Import hook
 
 Lovely tensors installes an import hook. Set `LOVELY_TENSORS=1`, and it
-will load automatically, no need to modify the code: \> Note: Don’t set
-it globally, or all python scripts you run will import LT and PyTorch,
-which will slow things down.
+will load automatically, no need to modify the code: \> Note: You can
+now set it globally. The installed import hook will triggger only when
+torch is imported.
 
 ``` python
 import torch

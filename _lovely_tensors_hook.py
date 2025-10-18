@@ -45,7 +45,6 @@ def _after_import_torch():
         file on your system and unset your 'LOVELY_TENSORS' environment variable.
         """
             print(ERROR_MESSAGE.format(e), file=sys.stderr)
-            raise
 
 class _WrappedTorchLoader(importlib.abc.Loader):
 
