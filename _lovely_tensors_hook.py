@@ -18,33 +18,20 @@ import importlib.util
 from types import ModuleType
 from typing import Optional, Sequence
 
-def torch_loaded() -> bool:
-    return isinstance(sys.modules.get("torch"), ModuleType)
-
-def torch_patched() -> bool:
-    mod = sys.modules.get("torch")
-    if not isinstance(mod, ModuleType):
-        return False
-    T = getattr(mod, "Tensor", None)
-    if T is None:
-        return False
-    return hasattr(T, "_plain_repr")
-
 def _after_import_torch():
-    if not torch_patched():
-        try:
-            import lovely_tensors
-            lovely_tensors.monkey_patch()
-        except Exception as e:
-            ERROR_MESSAGE = """\
-        Error: lovely_tensors.monkey_patch() failed with:
+    try:
+        # lovely_tensors auto-patches on import if LOVELY_TENSORS env var is set.
+        import lovely_tensors
+    except Exception as e:
+        ERROR_MESSAGE = """\
+    Error: lovely_tensors.monkey_patch() failed with:
 
-        {}
+    {}
 
-        If you uninstalled lovely_tensors, you should delete any '_lovely_tensors_hook.pth'
-        file on your system and unset your 'LOVELY_TENSORS' environment variable.
-        """
-            print(ERROR_MESSAGE.format(e), file=sys.stderr)
+    If you uninstalled lovely_tensors, you should delete any '_lovely_tensors_hook.pth'
+    file on your system and unset your 'LOVELY_TENSORS' environment variable.
+    """
+        print(ERROR_MESSAGE.format(e), file=sys.stderr)
 
 class _WrappedTorchLoader(importlib.abc.Loader):
 
@@ -61,14 +48,10 @@ class _WrappedTorchLoader(importlib.abc.Loader):
         _after_import_torch()
 
 class _TorchFinder(importlib.abc.MetaPathFinder):
-
     def find_spec(self, fullname: str, path: Optional[Sequence[str]], target: Optional[ModuleType] = None) -> Optional[importlib.machinery.ModuleSpec]:
         if fullname != 'torch':
             return None
-        try:
-            sys.meta_path.remove(self)
-        except ValueError:
-            pass
+        sys.meta_path.remove(self)
         real_spec = importlib.util.find_spec(fullname)
         if real_spec is None or real_spec.loader is None:
             return real_spec
@@ -76,7 +59,4 @@ class _TorchFinder(importlib.abc.MetaPathFinder):
         return real_spec
 
 if os.environ.get("LOVELY_TENSORS", "").strip().lower() in {"1", "true", "yes"}:
-    if torch_loaded():
-        _after_import_torch()
-    elif not any(isinstance(finder, _TorchFinder) for finder in sys.meta_path):
-        sys.meta_path.insert(0, _TorchFinder())
+    sys.meta_path.insert(0, _TorchFinder())

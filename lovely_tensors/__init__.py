@@ -6,3 +6,7 @@ from .repr_plt import *
 from .repr_chans import *
 from .patch import *
 from .utils import *
+
+import os
+if os.environ.get("LOVELY_TENSORS", "").strip().lower() in {"1", "true", "yes"}:
+    monkey_patch()
