@@ -517,9 +517,7 @@ LOVELY_TENSORS=1 python test.py
     x: tensor[4, 16] n=64 x∈[-1.652, 1.813] μ=-0.069 σ=0.844
 
 This is especially useful in combination with [Better
-Exceptions](https://github.com/Qix-/better-exceptions): \> Note: Better
-exceptions seems to be not working with Python 3.13:
-https://github.com/Qix-/better-exceptions/issues/134
+Exceptions](https://github.com/Qix-/better-exceptions):
 
 ``` python
 import torch
